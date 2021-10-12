@@ -1,96 +1,180 @@
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
+from PIL import ImageTk, Image
 
-#Attributes for the window
-root = Tk()
-root.title('Calorie Measure | Main Menu')
-root.geometry("500x500")
+#Imports code from a Python file named CaloriesBurned
+import CaloriesBurned
 
-class RecordingFitnessActivity:
-    def __init__(self):
-        #Creates the frame for the new window
-        self.win = Toplevel() 
-        self.frameFit = Frame(self.win)
-        self.frameFit.pack()
+#Creates the window for Record Fitness Activity
+class recordFitnessActivity:
 
-        #Label that creates a title
-        self.fitTitleLabel = Label(self.frameFit, text = "Record Fitness Activity")
-        self.fitTitleLabel.pack()   
+    def __init__(self, master):
+        #Creates the frame for the window
+        self.master = master
+        self.frame = tk.Frame(self.master)
+        self.frame.pack()
 
-        #A comboBox that contains four fitness activites
+        #Places an image in the window
+        self.fitnessImage = ImageTk.PhotoImage(Image.open("Fitness_Icon.png"))
+        self.labelIcon = tk.Label(self.master, image = self.fitnessImage).pack()
+
+        #Label title of the window
+        self.fitActivityLabel = tk.Label(self.master, text = "Record Fitness Activity")
+        self.fitActivityLabel.pack()
+
+        #Lets the user choose between four activities
         self.fitnessActivities = ["Walking", "Jogging", "Cycling", "Swimming"]
-        self.activityCombo = ttk.Combobox(self.frameFit, value = self.fitnessActivities )
+        self.activityCombo = ttk.Combobox(self.master, value = self.fitnessActivities)
         self.activityCombo.current(0)
         self.activityCombo.bind("<<ComboboxSelected>>")
         self.activityCombo.pack()
-        
-        #Asks the user for Hours spented in activity
-        self.hourLabel = Label(self.frameFit, text = "Enter the amount of Hours here:").pack()
-        self.hourTxt = Entry(self.frameFit, width = 5)
+
+        #Asks the user for the amount of hours they spent in an activity
+        tk.Label(self.master, text = "Enter the amount of Hours here:").pack()
+        self.hourTxt = tk.Entry(self.master, width = 5)
         self.hourTxt.pack()
 
-        #Asks the user for Minutes spented in activity
-        Label(self.frameFit, text = "Enter the amount of Minutes here:").pack()
-        self.minuteTxt = Entry(self.frameFit, width = 5)
+        #Asks the user for the amount of minutes they spent in an activity
+        tk.Label(self.master, text = "Enter the amount of Minutes here:").pack()
+        self.minuteTxt = tk.Entry(self.master, width = 5)
         self.minuteTxt.pack()
 
-        #Asks the user for their weight
-        Label(self.frameFit, text = "Enter your in pounds (lb):").pack()
-        self.userWeight = Entry(self.frameFit, width = 5)
-        self.userWeight.pack()
+        #Asks the user for their weight in pounds
+        tk.Label(self.master, text = "Enter in your weight in Pounds (lb):").pack()
+        self.userWeightTxt = tk.Entry(self.master, width = 5)
+        self.userWeightTxt.pack()
 
-        #Submits the information to a module called activityAndTime
-        self.recordBtn = Button(self.frameFit, text = "Record Activity", command = self.activityAndTime)
-        self.recordBtn.pack() 
+        #A button that starts the estimateBurnedCals method
+        self.recordBtn = tk.Button(self.master, text = "Record Activity", command = self.estimateBurnedCals)
+        self.recordBtn.pack()
 
 
-    #This calculates the amount of calories burned from an activity
-    def activityAndTime(self):
+
+    #This method calculates the amount of calories the user have burned
+    #based on the activity they chose
+    def estimateBurnedCals(self):
         
-        #Creates variables to be used in this module
-        self.fitActivty = self.activityCombo.get()
-        self.hourAmount = int(self.hourTxt.get())
-        self.minuteAmount = int(self.minuteTxt.get())
-        self.weight = float(self.userWeight.get())
+        #Gets the activity's name
+        self.fitActivity = self.activityCombo.get()
 
-        #If the user entered more than 60 minutes, it will convert 
-        #every 60 minutes to 1 hour
-        while self.minuteAmount > 60:
-            self.minuteAmount -= 60
-            self.hourAmount += 1
+        #Validates the user's input and stores the variables in the method
+        try:
+            self.hourAmount = int(self.hourTxt.get())
+            self.minuteAmount = int(self.minuteTxt.get())
+            self.userWeight = float(self.userWeightTxt.get())
+            pass
+        
+        #Tells the user that their input is invalid
+        except:
+            messagebox.showerror("Invaid Input", "Please use numbers when entering information.")
 
-        #Checks for activity and calulate calories lost based on activity
-        if self.fitActivty == "Walking":
-            self.avgWalkSpeed = 3.5
-            self.weightInKG = self.weight * 0.45359237
-            self.walkCalories = ((self.avgWalkSpeed * self.weightInKG * 3.5) / 200)
-            self.walkCaloriesTimed = (((self.hourAmount * 60) + self.minuteAmount) * self.walkCalories)
-            
-            #Shows the user how much calories they burned from walking
-            self.activityLabel = Label(self.frameFit, text = "From Walking, you have burned").pack()
-            self.answerLabel = Label(self.frameFit ,text = round(self.walkCaloriesTimed)).pack()
-            self.calLabel = Label(self.frameFit, text = "Calories").pack()        
+        #Displays the amount of calories they had burned
+        self.calAmount = CaloriesBurned.burnedFromActivity(self.fitActivity, self.hourAmount, self.minuteAmount, self.userWeight)
+        self.showEstimate = "You have burned an estimated " + str(self.calAmount) + " calories from " + self.fitActivity + "."
+        messagebox.showinfo("Calories Burned", self.showEstimate)
+
+    
+#Creates the window for Record Calories from Food 
+class recordFoodIntake:
+    
+    def __init__ (self, master):
+        #Creates the frame for the window
+        self.master = master
+        self.frame = tk.Frame(self.master)
+        self.frame.pack()
+
+        #Places an image in the window
+        self.foodImage = ImageTk.PhotoImage(Image.open("fast-food.png"))
+        self.labelIcon = tk.Label(self.master, image = self.foodImage).pack()
+
+        #Label title for window
+        self.foodTitleLabel = tk.Label(self.master, text = "Record Calories from Food")
+        self.foodTitleLabel.pack()
+
+        #Asks the user for the food's name they have eaten
+        self.foodLable = tk.Label(self.master, text = "Enter the food's name that you ate here:").pack()
+        self.foodNameTxt = tk.Entry(self.master, width = 10)
+        self.foodNameTxt.pack()
+
+        #Asks the user for the amount of Calories the food contains 
+        self.calorieFromFood = tk.Label(self.master, text = "Enter the amount of calories that is contained in the food:").pack()
+        self.foodCalTxt = tk.Entry(self.master, width = 10)
+        self.foodCalTxt.pack()
+
+        #A button that starts the CalorieFromFood method
+        self.recordFoodBtn = tk.Button(self.master, text = "Record Food and Calorie", command = self.CalorieFromFood)
+        self.recordFoodBtn.pack()
+
+    #The CalorieFromFood method shows the user the infromation they
+    #have entered
+    def CalorieFromFood(self):
+
+        #Stores the name of the food in the method's variable
+        self.nameOfFood = str(self.foodNameTxt.get())
+
+        #Validates the user's input and stores the variable in the method
+        try:
+            self.amountOfCalories = float(self.foodCalTxt.get())
+            pass
+        except:
+            messagebox.showerror("Invaid Input", "Please use numbers when entering the amount of calories of the food.")
+
+        #Displays the food's name and amount of calories it has to the user
+        self.foodAndCalorie = "You have gained " + str(round(self.amountOfCalories, 2)) + " Calories from eating " + self.nameOfFood + "."
+        messagebox.showinfo("Calories from Food", self.foodAndCalorie)
 
 
+#The main menu of Caloire Measure
+class MainNav:
 
-class MainWindow:
-    #Creates the frame for the main window
     def __init__(self, master):
-        mainFrame = Frame(master)
-        mainFrame.pack()
+        #Creates the frame for the main window
+        self.master = master
+        self.frame = tk.Frame(self.master)
+        self.frame.pack()
 
-        self.titleLabel = Label(master, text = "Calorie Measure")
-        self.titleLabel.pack()
+        #Label title for the main window
+        self.titleLable = tk.Label(self.master, text = "Calorie Measure")
+        self.titleLable.pack()
 
-        self.caloreBtn = Button(master, text = "Record Fitness Activity", command = self.recordActivty)
-        self.caloreBtn.pack()
+        #A button that starts the loadRecordActivity method
+        self.calorieBurnedBtn = tk.Button(self.master, text = "Record Fitness Activity", command = self.loadRecordActivity)
+        self.calorieBurnedBtn.pack()
 
-    #If the button is pressed, it will open a new window
-    def recordActivty(self):
-        self.record = RecordingFitnessActivity()
-        self.record.win.mainloop()
+        #A button that starts the loadFoodIntake method
+        self.calorieIntakeBtn = tk.Button(self.master, text = "Record Calories from Food", command = self.loadFoodIntake)
+        self.calorieIntakeBtn.pack()
+
+        #A button that closes the program
+        self.stopMainNavBtn = tk.Button(self.master, text = "Exit Program", command = root.quit)
+        self.stopMainNavBtn.pack()
+
+    #Contians the elements for the Record Fitness Activity Window
+    #and starts the recordFitnessActivity class
+    def loadRecordActivity(self):
+        self.activityWindow = tk.Toplevel(self.master)
+        self.activityWindow.geometry("500x300")
+        self.activityWindow.title('Record Fitness Activity')
+        self.activityWindow['background'] = '#5c85d6'
+        self.app = recordFitnessActivity(self.activityWindow)
+
+    #Contians the elements for the Record Calories from Food Window
+    #and starts the recordFoodIntake class
+    def loadFoodIntake(self):
+        self.foodWindow = tk.Toplevel(self.master)
+        self.foodWindow.geometry("500x300")
+        self.foodWindow.title('Record Calories from Food')
+        self.foodWindow['background'] = '#5c85d6'
+        self.app = recordFoodIntake(self.foodWindow)
 
 
-#Starts the main window
-winStart = MainWindow(root)
+
+#Contians the title and size of the window
+root = tk.Tk()
+root.geometry("600x600")
+root.title('Calorie Measure')
+root['background'] = '#5c85d6'
+#Starts the main window of Calorie Measure
+app = MainNav(root)
 root.mainloop()
