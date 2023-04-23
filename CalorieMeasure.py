@@ -16,8 +16,8 @@ class recordFitnessActivity:
         self.frame.pack()
 
         #Places an image in the window
-        self.fitnessImage = ImageTk.PhotoImage(Image.open("Fitness_Icon.png"))
-        self.labelIcon = tk.Label(self.master, image = self.fitnessImage).pack()
+        #self.fitnessImage = ImageTk.PhotoImage(Image.open("Fitness_Icon.png"))
+        #self.labelIcon = tk.Label(self.master, image = self.fitnessImage).pack()
 
         #Label title of the window
         self.fitActivityLabel = tk.Label(self.master, text = "Record Fitness Activity")
@@ -48,7 +48,6 @@ class recordFitnessActivity:
         #A button that starts the estimateBurnedCals method
         self.recordBtn = tk.Button(self.master, text = "Record Activity", command = self.estimateBurnedCals)
         self.recordBtn.pack()
-
 
 
     #This method calculates the amount of calories the user have burned
@@ -85,8 +84,8 @@ class recordFoodIntake:
         self.frame.pack()
 
         #Places an image in the window
-        self.foodImage = ImageTk.PhotoImage(Image.open("fast-food.png"))
-        self.labelIcon = tk.Label(self.master, image = self.foodImage).pack()
+        #self.foodImage = ImageTk.PhotoImage(Image.open("fast-food.png"))
+        #self.labelIcon = tk.Label(self.master, image = self.foodImage).pack()
 
         #Label title for window
         self.foodTitleLabel = tk.Label(self.master, text = "Record Calories from Food")
